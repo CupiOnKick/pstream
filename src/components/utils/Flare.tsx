@@ -1,10 +1,19 @@
 import c from "classnames";
-import { ReactNode, useEffect, useRef } from "react";
+import {
+  ReactNode,
+  useEffect,
+  useRef,
+  HTMLAttributes,
+} from "react";
 
 import { usePreferencesStore } from "../../stores/preferences";
 import "./Flare.css";
 
-export interface FlareProps {
+/* ------------------------------------------------------------------ */
+/* Types */
+/* ------------------------------------------------------------------ */
+
+export interface FlareProps extends HTMLAttributes<HTMLDivElement> {
   className?: string;
   backgroundClass: string;
   flareSize?: number;
@@ -14,8 +23,16 @@ export interface FlareProps {
   gradientSpread?: number;
 }
 
+/* ------------------------------------------------------------------ */
+/* Constants */
+/* ------------------------------------------------------------------ */
+
 const SIZE_DEFAULT = 200;
 const CSS_VAR_DEFAULT = "--colors-global-accentA";
+
+/* ------------------------------------------------------------------ */
+/* Base Components */
+/* ------------------------------------------------------------------ */
 
 function Base(props: {
   className?: string;
@@ -35,26 +52,44 @@ function Base(props: {
 }
 
 function Child(props: { className?: string; children?: ReactNode }) {
-  return <div className={c(props.className, "relative")}>{props.children}</div>;
+  return (
+    <div className={c(props.className, "relative")}>
+      {props.children}
+    </div>
+  );
 }
 
-function Light(props: FlareProps) {
-  const { enableLowPerformanceMode } = usePreferencesStore();
+/* ------------------------------------------------------------------ */
+/* Light Flare */
+/* ------------------------------------------------------------------ */
 
+function Light({
+  className,
+  backgroundClass,
+  flareSize,
+  cssColorVar,
+  enabled,
+  gradientOpacity,
+  gradientSpread,
+  ...domProps
+}: FlareProps) {
+  const { enableLowPerformanceMode } = usePreferencesStore();
   const outerRef = useRef<HTMLDivElement>(null);
-  const size = props.flareSize ?? SIZE_DEFAULT;
-  const cssVar = props.cssColorVar ?? CSS_VAR_DEFAULT;
-  const opacity = props.gradientOpacity ?? 1;
-  const spread = props.gradientSpread ?? 70;
+
+  const size = flareSize ?? SIZE_DEFAULT;
+  const cssVar = cssColorVar ?? CSS_VAR_DEFAULT;
+  const opacity = gradientOpacity ?? 1;
+  const spread = gradientSpread ?? 70;
 
   useEffect(() => {
-    // Only add mouse listener if not in low performance mode
     if (enableLowPerformanceMode) return;
 
     function mouseMove(e: MouseEvent) {
       if (!outerRef.current) return;
+
       const rect = outerRef.current.getBoundingClientRect();
       const halfSize = size / 2;
+
       outerRef.current.style.setProperty(
         "--bg-x",
         `${(e.clientX - rect.left - halfSize).toFixed(0)}px`,
@@ -64,12 +99,11 @@ function Light(props: FlareProps) {
         `${(e.clientY - rect.top - halfSize).toFixed(0)}px`,
       );
     }
-    document.addEventListener("mousemove", mouseMove);
 
+    document.addEventListener("mousemove", mouseMove);
     return () => document.removeEventListener("mousemove", mouseMove);
   }, [size, enableLowPerformanceMode]);
 
-  // Disable flare effect when low performance mode is enabled
   if (enableLowPerformanceMode) {
     return null;
   }
@@ -77,40 +111,45 @@ function Light(props: FlareProps) {
   return (
     <div
       ref={outerRef}
+      {...domProps}
       className={c(
         "flare-light pointer-events-none absolute inset-0 overflow-hidden opacity-0 transition-opacity duration-[400ms]",
-        props.className,
+        className,
         {
-          "!opacity-100": props.enabled ?? false,
+          "!opacity-100": enabled ?? false,
         },
       )}
       style={{
         backgroundImage: `radial-gradient(circle at center, rgba(var(${cssVar}) / ${opacity}), rgba(var(${cssVar}) / 0) ${spread}%)`,
-        backgroundPosition: `var(--bg-x) var(--bg-y)`,
+        backgroundPosition: "var(--bg-x) var(--bg-y)",
         backgroundRepeat: "no-repeat",
-        backgroundSize: `${size.toFixed(0)}px ${size.toFixed(0)}px`,
+        backgroundSize: `${size}px ${size}px`,
       }}
     >
       <div
         className={c(
           "absolute inset-[1px] overflow-hidden",
-          props.className,
-          props.backgroundClass,
+          className,
+          backgroundClass,
         )}
       >
         <div
           className="absolute inset-0 opacity-10"
           style={{
             backgroundImage: `radial-gradient(circle at center, rgba(var(${cssVar}) / ${opacity}), rgba(var(${cssVar}) / 0) ${spread}%)`,
-            backgroundPosition: `var(--bg-x) var(--bg-y)`,
+            backgroundPosition: "var(--bg-x) var(--bg-y)",
             backgroundRepeat: "no-repeat",
-            backgroundSize: `${size.toFixed(0)}px ${size.toFixed(0)}px`,
+            backgroundSize: `${size}px ${size}px`,
           }}
         />
       </div>
     </div>
   );
 }
+
+/* ------------------------------------------------------------------ */
+/* Export API */
+/* ------------------------------------------------------------------ */
 
 export const Flare = {
   Base,
