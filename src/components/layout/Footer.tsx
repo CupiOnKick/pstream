@@ -9,7 +9,6 @@ import { WideContainer } from "@/components/layout/WideContainer";
 import { shouldHaveLegalPage } from "@/pages/Legal";
 import { conf } from "@/setup/config";
 
-// to and href are mutually exclusive
 type FooterLinkProps = RequireExactlyOne<
   {
     children: React.ReactNode;
@@ -25,7 +24,6 @@ function FooterLink(props: FooterLinkProps) {
 
   const navigateTo = useCallback(() => {
     if (!props.to) return;
-
     navigate(props.to);
   }, [navigate, props.to]);
 
@@ -60,19 +58,21 @@ export function Footer() {
   const { t } = useTranslation();
 
   return (
-    <footer className="mt-16 border-t border-type-divider py-16 md:py-8">
-      <WideContainer ultraWide classNames="grid md:grid-cols-2 gap-16 md:gap-8">
+    <footer className="mt-16 rounded-2xl bg-footer-background bg-opacity-50 backdrop-blur-lg mx-4 mb-4 md:mx-8 md:mb-8 border border-footer-border overflow-hidden">
+      <WideContainer ultraWide classNames="grid md:grid-cols-2 gap-16 md:gap-8 py-16 md:py-12 px-8 md:px-12">
         <div>
           <div className="inline-block">
             <BrandPill />
           </div>
-          <p className="mt-4 lg:max-w-[400px]">{t("footer.tagline")}</p>
+          <p className="mt-4 lg:max-w-[400px] text-type-secondary">
+            {t("footer.tagline")}
+          </p>
         </div>
         <div className="md:text-right">
           <h3 className="font-semibold text-type-emphasis">
             {t("footer.legal.disclaimer")}
           </h3>
-          <p className="mt-3">{t("footer.legal.disclaimerText")}</p>
+          <p className="mt-3 text-type-secondary">{t("footer.legal.disclaimerText")}</p>
         </div>
         <div className="flex flex-wrap gap-[0.5rem] -ml-3">
           {conf().GITHUB_LINK && (
