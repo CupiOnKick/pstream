@@ -138,7 +138,7 @@ export const SearchBarInput = forwardRef<HTMLInputElement, SearchBarProps>(
                       : "text-type-secondary hover:text-type-emphasis",
                   )}
                 >
-                  <Icon icon={Icons.CLOSE} className="text-lg" />
+                  <Icon icon={Icons.x} className="text-lg" />
                 </button>
               )}
             </div>
