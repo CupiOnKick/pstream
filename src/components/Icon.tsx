@@ -86,7 +86,6 @@ export enum Icons {
   TRANSLATE = "translate",
   THUMBS_UP = "thumbsUp",
   THUMBS_DOWN = "thumbsDown",
-  CLOSE = "X",
   CALENDAR = "calendar",
 }
 
