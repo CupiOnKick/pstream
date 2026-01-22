@@ -3,6 +3,8 @@ import { Helmet } from "react-helmet-async";
 import { useTranslation } from "react-i18next";
 import { To, useNavigate } from "react-router-dom";
 
+import { EstimatedSchedule } from "@/pages/parts/home/EstimatedSchedule";
+
 import { WideContainer } from "@/components/layout/WideContainer";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useRandomTranslation } from "@/hooks/useRandomTranslation";
@@ -235,6 +237,11 @@ export function HomePage() {
           </div>
         )}
       </WideContainer>
+
+      {/* Estimated Schedule Section */}
+      {!search && !enableLowPerformanceMode && (
+        <EstimatedSchedule />
+      )}
     </HomeLayout>
   );
 }
