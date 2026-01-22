@@ -23,8 +23,10 @@ export const SearchBarInput = forwardRef<HTMLInputElement, SearchBarProps>(
     const [lightTheme, setLightTheme] = useState(
       Boolean(props.isInFeatured) && window.scrollY < 600,
     );
+
     const containerRef = useRef<HTMLDivElement>(null);
     const filterButtonRef = useRef<HTMLButtonElement>(null);
+
     const [showTooltip, setShowTooltip] = useState(false);
     const [showFilterPopup, setShowFilterPopup] = useState(false);
 
@@ -36,6 +38,7 @@ export const SearchBarInput = forwardRef<HTMLInputElement, SearchBarProps>(
       const handleScroll = () => {
         setLightTheme(Boolean(props.isInFeatured) && window.scrollY < 600);
       };
+
       window.addEventListener("scroll", handleScroll);
       return () => window.removeEventListener("scroll", handleScroll);
     }, [props.isInFeatured]);
@@ -52,31 +55,25 @@ export const SearchBarInput = forwardRef<HTMLInputElement, SearchBarProps>(
       }
 
       document.addEventListener("click", handleClickOutside);
-      return () => {
-        document.removeEventListener("click", handleClickOutside);
-      };
+      return () => document.removeEventListener("click", handleClickOutside);
     }, [props]);
 
     const handleFilterApply = (filters: FilterOptions) => {
-      if (props.onFiltersApply) {
-        props.onFiltersApply(filters);
-      }
+      props.onFiltersApply?.(filters);
     };
 
     return (
       <>
         <div
+          ref={containerRef}
           className={c(
             "relative transition-[colors,box-shadow] outline-0 duration-200",
             lightTheme
               ? "before:from-white/10 before:to-white/5 hover:before:from-white/20 hover:before:to-white/10 focus-within:before:from-white/30 focus-within:before:to-white/20"
               : "before:from-type-divider/20 before:to-type-divider/10 hover:before:from-type-divider/40 hover:before:to-type-divider/30 focus-within:before:from-type-divider/60 focus-within:before:to-type-divider/40",
             "before:absolute before:inset-0 before:rounded-full before:bg-gradient-to-br before:pointer-events-none",
-            focused && !showTooltip
-              ? "ring-2 ring-type-link ring-opacity-50"
-              : "",
+            focused && !showTooltip && "ring-2 ring-type-link ring-opacity-50",
           )}
-          ref={containerRef}
         >
           <div
             className={c(
@@ -86,24 +83,24 @@ export const SearchBarInput = forwardRef<HTMLInputElement, SearchBarProps>(
           >
             <div className="relative flex items-center pr-2 pl-4 py-3">
               <Icon
+                icon={Icons.SEARCH}
                 className={c(
                   "mr-3 text-xl transition-colors duration-200",
                   lightTheme ? "text-white/60" : "text-type-secondary",
                 )}
-                icon={Icons.SEARCH}
               />
 
               <TextInputControl
                 ref={ref}
+                value={props.value}
+                placeholder={props.placeholder}
                 onChange={(value) => props.onChange(value, false)}
                 onFocus={() => {
                   setFocused(true);
                   setShowTooltip(false);
                 }}
-                value={props.value}
-                placeholder={props.placeholder}
                 className={c(
-                  "bg-transparent placeholder:transition-colors placeholder:duration-200 w-full outline-0",
+                  "bg-transparent w-full outline-0 placeholder:transition-colors placeholder:duration-200",
                   lightTheme
                     ? "placeholder:text-white/40 text-white"
                     : "placeholder:text-type-secondary text-type-emphasis",
@@ -114,6 +111,7 @@ export const SearchBarInput = forwardRef<HTMLInputElement, SearchBarProps>(
               <button
                 ref={filterButtonRef}
                 onClick={() => setShowFilterPopup(!showFilterPopup)}
+                title="Advanced filters"
                 className={c(
                   "ml-2 p-2 rounded-full transition-all duration-200",
                   "hover:bg-type-divider/20 focus:outline-none focus:ring-2 focus:ring-type-link",
@@ -123,7 +121,6 @@ export const SearchBarInput = forwardRef<HTMLInputElement, SearchBarProps>(
                       ? "text-white/60 hover:text-white/80"
                       : "text-type-secondary hover:text-type-emphasis",
                 )}
-                title="Advanced filters"
               >
                 <Icon icon={Icons.SETTINGS} className="text-lg" />
               </button>
@@ -147,8 +144,11 @@ export const SearchBarInput = forwardRef<HTMLInputElement, SearchBarProps>(
             </div>
           </div>
 
+          {/* ✅ FIXED FLARE USAGE */}
           {!props.hideTooltip && !focused && props.value.length === 0 && (
-            <Flare
+            <Flare.Light
+              enabled={showTooltip}
+              backgroundClass="rounded-full"
               onMouseEnter={() => setShowTooltip(true)}
               onMouseLeave={() => setShowTooltip(false)}
             />
@@ -165,4 +165,5 @@ export const SearchBarInput = forwardRef<HTMLInputElement, SearchBarProps>(
     );
   },
 );
+
 SearchBarInput.displayName = "SearchBarInput";
