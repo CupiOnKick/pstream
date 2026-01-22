@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { WideContainer } from "@/components/layout/WideContainer";
+import { Icon } from "@/components/Icon";
 import { SectionHeading } from "@/components/layout/SectionHeading";
-import { Icons } from "@/components/Icon";
+import { WideContainer } from "@/components/layout/WideContainer";
 
 interface ScheduleItem {
   id: string;
