@@ -1,7 +1,6 @@
 import { allThemes, defaultTheme, safeThemeList } from "./themes";
 import type { Config } from "tailwindcss";
 import plugin from "tailwindcss/plugin";
-
 const themer = require("tailwindcss-themer");
 
 const config: Config = {
@@ -17,12 +16,15 @@ const config: Config = {
         "3xl": "2650px", // Custom breakpoint for screens at least 2650px wide
         "4xl": "3840px", // Custom breakpoint for screens at least 4096px wide
       },
-
       /* fonts */
       fontFamily: {
         main: "'DM Sans'", // "main": "'Open Sans'",
       },
-
+      /* colors */
+      colors: {
+        "footer-background": "rgb(var(--tw-color-footer-background) / <alpha-value>)",
+        "footer-border": "rgb(var(--tw-color-footer-border) / <alpha-value>)",
+      },
       /* animations */
       keyframes: {
         "loading-pin": {
@@ -32,6 +34,10 @@ const config: Config = {
         "fade-in": {
           "0%": { opacity: "0" },
           "100%": { opacity: "1" },
+        },
+        fadeIn: {
+          "0%": { opacity: "0", transform: "translateY(-8px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
         },
         "seek-left": {
           "0%": { transform: "translateX(0) scale(1)", opacity: "1" },
@@ -45,6 +51,7 @@ const config: Config = {
       animation: {
         "loading-pin": "loading-pin 1.8s ease-in-out infinite",
         "fade-in": "fade-in 200ms ease-out forwards",
+        fadeIn: "fadeIn 0.3s ease-in-out",
         "seek-left": "seek-left 0.5s cubic-bezier(0, 0, 0.2, 1) forwards",
         "seek-right": "seek-right 0.5s cubic-bezier(0, 0, 0.2, 1) forwards",
       },
