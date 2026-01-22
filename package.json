@@ -1,9 +1,9 @@
 {
   "packageManager": "pnpm@9.14.4",
-  "name": "P-Stream",
+  "name": "Corridor",
   "version": "5.3.4",
   "private": true,
-  "homepage": "https://github.com/p-stream/p-stream",
+  "homepage": "https://github.com/CupiOnKick/pstream",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
