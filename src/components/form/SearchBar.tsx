@@ -2,9 +2,9 @@ import c from "classnames";
 import { forwardRef, useEffect, useRef, useState } from "react";
 
 import { Flare } from "@/components/utils/Flare";
-
 import { Icon, Icons } from "../Icon";
 import { TextInputControl } from "../text-inputs/TextInputControl";
+import { SearchFilterPopup, FilterOptions } from "./SearchFilterPopup";
 
 export interface SearchBarProps {
   placeholder?: string;
@@ -14,6 +14,7 @@ export interface SearchBarProps {
   isSticky?: boolean;
   isInFeatured?: boolean;
   hideTooltip?: boolean;
+  onFiltersApply?: (filters: FilterOptions) => void;
 }
 
 export const SearchBarInput = forwardRef<HTMLInputElement, SearchBarProps>(
@@ -23,7 +24,9 @@ export const SearchBarInput = forwardRef<HTMLInputElement, SearchBarProps>(
       Boolean(props.isInFeatured) && window.scrollY < 600,
     );
     const containerRef = useRef<HTMLDivElement>(null);
+    const filterButtonRef = useRef<HTMLButtonElement>(null);
     const [showTooltip, setShowTooltip] = useState(false);
+    const [showFilterPopup, setShowFilterPopup] = useState(false);
 
     function setSearch(value: string) {
       props.onChange(value, true);
@@ -37,108 +40,129 @@ export const SearchBarInput = forwardRef<HTMLInputElement, SearchBarProps>(
       return () => window.removeEventListener("scroll", handleScroll);
     }, [props.isInFeatured]);
 
+    useEffect(() => {
+      function handleClickOutside(event: MouseEvent) {
+        if (
+          containerRef.current &&
+          !containerRef.current.contains(event.target as Node)
+        ) {
+          props.onUnFocus();
+          setFocused(false);
+        }
+      }
+
+      document.addEventListener("click", handleClickOutside);
+      return () => {
+        document.removeEventListener("click", handleClickOutside);
+      };
+    }, [props]);
+
+    const handleFilterApply = (filters: FilterOptions) => {
+      if (props.onFiltersApply) {
+        props.onFiltersApply(filters);
+      }
+    };
+
     return (
-      <div ref={containerRef}>
-        <Flare.Base
-          className={c({
-            "hover:flare-enabled group flex flex-col rounded-[28px] transition-colors sm:flex-row sm:items-center relative backdrop-blur-sm": true,
-            "transition-colors duration-300": true,
-            "bg-search-background/50": !focused && lightTheme,
-            "bg-search-background":
-              focused || props.isSticky || !props.isInFeatured,
-          })}
+      <>
+        <div
+          className={c(
+            "relative transition-[colors,box-shadow] outline-0 duration-200",
+            lightTheme
+              ? "before:from-white/10 before:to-white/5 hover:before:from-white/20 hover:before:to-white/10 focus-within:before:from-white/30 focus-within:before:to-white/20"
+              : "before:from-type-divider/20 before:to-type-divider/10 hover:before:from-type-divider/40 hover:before:to-type-divider/30 focus-within:before:from-type-divider/60 focus-within:before:to-type-divider/40",
+            "before:absolute before:inset-0 before:rounded-full before:bg-gradient-to-br before:pointer-events-none",
+            focused && !showTooltip
+              ? "ring-2 ring-type-link ring-opacity-50"
+              : "",
+          )}
+          ref={containerRef}
         >
-          <Flare.Light
-            flareSize={400}
-            enabled={focused}
-            className="rounded-[28px]"
-            backgroundClass={c({
-              "transition-colors": true,
-              "bg-search-background": !focused,
-              "bg-search-focused": focused,
-            })}
-          />
-          <Flare.Child className="flex flex-1 flex-col">
-            <div
-              className={c(
-                "absolute bottom-0 left-5 top-0 flex max-h-14 items-center text-search-icon cursor-pointer z-10",
-                "transition-colors duration-300",
-                props.isInFeatured
-                  ? lightTheme
-                    ? "text-white/50"
-                    : ""
-                  : "text-search-icon",
-              )}
-              onClick={(e) => {
-                e.preventDefault();
-                setShowTooltip(!showTooltip);
-                if (ref && typeof ref !== "function" && ref.current) {
-                  ref.current.focus();
-                }
-              }}
-            >
-              <Icon icon={Icons.SEARCH} />
-            </div>
-
-            <TextInputControl
-              ref={ref}
-              onUnFocus={() => {
-                setFocused(false);
-                props.onUnFocus();
-              }}
-              onFocus={() => setFocused(true)}
-              onChange={(val) => setSearch(val)}
-              value={props.value}
-              className={c(
-                "w-full flex-1 bg-transparent px-4 py-4 pl-12 !text-search-text focus:outline-none sm:py-4 sm:pr-2 transition-colors duration-300",
-                "transition-colors duration-300",
-                props.isInFeatured
-                  ? lightTheme
-                    ? "text-white/50"
-                    : "placeholder-search-placeholder"
-                  : "placeholder-search-placeholder",
-              )}
-              placeholder={props.placeholder}
-            />
-
-            {showTooltip && !props.hideTooltip && (
-              <div className="py-4">
-                <p className="font-bold text-sm mb-1 text-search-text">
-                  Search:
-                </p>
-                <div className="space-y-1.5 text-xs text-search-text">
-                  <div>
-                    <p className="mb-0.5">TMDB ID search:</p>
-                    <p className="text-type-secondary italic pl-2">
-                      tmdb:123456 - For movies
-                    </p>
-                    <p className="text-type-secondary italic pl-2">
-                      tmdb:123456:tv - For TV shows
-                    </p>
-                  </div>
-                </div>
-              </div>
+          <div
+            className={c(
+              "relative rounded-full backdrop-blur-sm",
+              lightTheme ? "bg-white/5" : "bg-type-divider/10",
             )}
+          >
+            <div className="relative flex items-center pr-2 pl-4 py-3">
+              <Icon
+                className={c(
+                  "mr-3 text-xl transition-colors duration-200",
+                  lightTheme ? "text-white/60" : "text-type-secondary",
+                )}
+                icon={Icons.SEARCH}
+              />
 
-            {props.value.length > 0 && (
-              <div
-                onClick={() => {
-                  props.onUnFocus("");
-                  if (ref && typeof ref !== "function") {
-                    ref.current?.focus();
-                  }
+              <TextInputControl
+                ref={ref}
+                onChange={(value) => props.onChange(value, false)}
+                onFocus={() => {
+                  setFocused(true);
+                  setShowTooltip(false);
                 }}
-                className="cursor-pointer hover:text-white  absolute bottom-0 right-2 top-0 flex justify-center my-auto h-10 w-10 items-center hover:bg-search-hoverBackground active:scale-110 text-search-icon rounded-full transition-[transform,background-color] duration-200"
+                value={props.value}
+                placeholder={props.placeholder}
+                className={c(
+                  "bg-transparent placeholder:transition-colors placeholder:duration-200 w-full outline-0",
+                  lightTheme
+                    ? "placeholder:text-white/40 text-white"
+                    : "placeholder:text-type-secondary text-type-emphasis",
+                )}
+              />
+
+              {/* Filter Button */}
+              <button
+                ref={filterButtonRef}
+                onClick={() => setShowFilterPopup(!showFilterPopup)}
+                className={c(
+                  "ml-2 p-2 rounded-full transition-all duration-200",
+                  "hover:bg-type-divider/20 focus:outline-none focus:ring-2 focus:ring-type-link",
+                  showFilterPopup
+                    ? "bg-type-link/20 text-type-link"
+                    : lightTheme
+                      ? "text-white/60 hover:text-white/80"
+                      : "text-type-secondary hover:text-type-emphasis",
+                )}
+                title="Advanced filters"
               >
-                <Icon
-                  icon={Icons.X}
-                  className="transition-colors duration-200"
-                />
-              </div>
-            )}
-          </Flare.Child>
-        </Flare.Base>
-      </div>
+                <Icon icon={Icons.SETTINGS} className="text-lg" />
+              </button>
+
+              {props.value.length > 0 && (
+                <button
+                  onClick={() => {
+                    setSearch("");
+                    props.onUnFocus("");
+                  }}
+                  className={c(
+                    "ml-1 p-2 rounded-full transition-colors duration-200",
+                    lightTheme
+                      ? "text-white/60 hover:text-white/80"
+                      : "text-type-secondary hover:text-type-emphasis",
+                  )}
+                >
+                  <Icon icon={Icons.CLOSE} className="text-lg" />
+                </button>
+              )}
+            </div>
+          </div>
+
+          {!props.hideTooltip && !focused && props.value.length === 0 && (
+            <Flare
+              onMouseEnter={() => setShowTooltip(true)}
+              onMouseLeave={() => setShowTooltip(false)}
+            />
+          )}
+        </div>
+
+        <SearchFilterPopup
+          isOpen={showFilterPopup}
+          onClose={() => setShowFilterPopup(false)}
+          onApplyFilters={handleFilterApply}
+          anchorElement={filterButtonRef.current}
+        />
+      </>
     );
   },
 );
+SearchBarInput.displayName = "SearchBarInput";
