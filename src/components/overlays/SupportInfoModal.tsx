@@ -23,7 +23,7 @@ export function SupportInfoModal({ id }: { id: string }) {
             <Button
               theme="purple"
               onClick={() =>
-                window.open("https://rentry.co/nnqtas3e", "_blank")
+                window.open("", "_blank")
               }
             >
               {t("home.support.donate")}
