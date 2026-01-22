@@ -87,14 +87,20 @@ html[data-no-scroll] body {
   min-height: 100dvh;
 }
 
-/*generated with Input range slider CSS style generator (version 20211225)
-https://toughengineer.github.io/demo/slider-styler*/
+/* CSS Variables */
 :root {
+  /* Slider variables */
   --slider-height: 0.25rem;
   --slider-border-radius: 1em;
   --slider-progress-background: #8652bb;
+  
+  /* Footer color variables */
+  --tw-color-footer-background: 17 24 39; /* dark gray background */
+  --tw-color-footer-border: 107 114 128; /* gray border */
 }
 
+/*generated with Input range slider CSS style generator (version 20211225)
+https://toughengineer.github.io/demo/slider-styler*/
 input[type="range"].styled-slider {
   height: var(--slider-height);
   -webkit-appearance: none;
