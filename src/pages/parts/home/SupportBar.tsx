@@ -119,7 +119,7 @@ export function SupportBar() {
               </button>
             </span>
             <span className="ml-auto text-right flex-shrink-0 whitespace-nowrap">
-              <MwLink url="https://rentry.co/nnqtas3e">
+              <MwLink url="">
                 {t("home.support.donate")}
               </MwLink>
             </span>
