@@ -169,7 +169,7 @@ export function SearchFilterPopup({
             onClick={onClose}
             className="p-1 hover:bg-dropdown-hoverBackground rounded transition-colors"
           >
-            <Icon icon={Icons.CLOSE} className="text-xl" />
+            <Icon icon={Icons.x} className="text-xl" />
           </button>
         </div>
 
