@@ -3,15 +3,14 @@ import { forwardRef, useEffect, useRef, useState } from "react";
 
 import { Flare } from "@/components/utils/Flare";
 import { Icon, Icons } from "../Icon";
+import { FilterOptions, SearchFilterPopup } from "../layout/SearchFilterPopup";
 import { TextInputControl } from "../text-inputs/TextInputControl";
-import { SearchFilterPopup, FilterOptions } from "../layout/SearchFilterPopup";
 
 export interface SearchBarProps {
   placeholder?: string;
   onChange: (value: string, force: boolean) => void;
   onUnFocus: (newSearch?: string) => void;
   value: string;
-  isSticky?: boolean;
   isInFeatured?: boolean;
   hideTooltip?: boolean;
   onFiltersApply?: (filters: FilterOptions) => void;
@@ -110,6 +109,7 @@ export const SearchBarInput = forwardRef<HTMLInputElement, SearchBarProps>(
               {/* Filter Button */}
               <button
                 ref={filterButtonRef}
+                type="button"
                 onClick={() => setShowFilterPopup(!showFilterPopup)}
                 title="Advanced filters"
                 className={c(
@@ -127,6 +127,7 @@ export const SearchBarInput = forwardRef<HTMLInputElement, SearchBarProps>(
 
               {props.value.length > 0 && (
                 <button
+                  type="button"
                   onClick={() => {
                     setSearch("");
                     props.onUnFocus("");
