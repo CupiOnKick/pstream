@@ -67,12 +67,8 @@ export function HomePage() {
 
   const { showModal } = useOverlayStack();
 
-  const enableDiscover = usePreferencesStore(
-    (state) => state.enableDiscover,
-  );
-  const enableFeatured = usePreferencesStore(
-    (state) => state.enableFeatured,
-  );
+  const enableDiscover = usePreferencesStore((state) => state.enableDiscover);
+  const enableFeatured = usePreferencesStore((state) => state.enableFeatured);
   const enableCarouselView = usePreferencesStore(
     (state) => state.enableCarouselView,
   );
