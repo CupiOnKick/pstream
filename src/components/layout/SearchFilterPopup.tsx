@@ -1,6 +1,6 @@
-import { useRef, useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
 import classNames from "classnames";
+import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import { Icon, Icons } from "@/components/Icon";
 
@@ -52,6 +52,7 @@ export function SearchFilterPopup({
 }: SearchFilterPopupProps) {
   const { t } = useTranslation();
   const popupRef = useRef<HTMLDivElement>(null);
+
   const [filters, setFilters] = useState<FilterOptions>({
     contentTypes: [],
     genres: [],
@@ -78,13 +79,15 @@ export function SearchFilterPopup({
         document.removeEventListener("mousedown", handleClickOutside);
       };
     }
-  }, [isOpen, onClose, anchorElement]);
+
+    return undefined;
+  }, [anchorElement, isOpen, onClose]);
 
   const handleContentTypeChange = (type: string) => {
     setFilters((prev) => ({
       ...prev,
       contentTypes: prev.contentTypes.includes(type)
-        ? prev.contentTypes.filter((t) => t !== type)
+        ? prev.contentTypes.filter((ct) => ct !== type)
         : [...prev.contentTypes, type],
     }));
   };
@@ -142,7 +145,9 @@ export function SearchFilterPopup({
     });
   };
 
-  if (!isOpen) return null;
+  if (!isOpen) {
+    return null;
+  }
 
   return (
     <div
@@ -150,7 +155,7 @@ export function SearchFilterPopup({
       className={classNames(
         "fixed z-50 bg-dropdown-background border border-type-divider rounded-lg shadow-2xl",
         "w-[90vw] max-w-md max-h-[80vh] overflow-y-auto",
-        "animate-fadeIn"
+        "animate-fadeIn",
       )}
       style={{
         right: "1rem",
@@ -166,6 +171,7 @@ export function SearchFilterPopup({
             {t("search.filters.title") || "Filters"}
           </h3>
           <button
+            type="button"
             onClick={onClose}
             className="p-1 hover:bg-dropdown-hoverBackground rounded transition-colors"
           >
@@ -173,7 +179,7 @@ export function SearchFilterPopup({
           </button>
         </div>
 
-        {/* Content Type Filter */}
+        {/* Content Type */}
         <div>
           <h4 className="text-sm font-semibold text-type-emphasis mb-3">
             {t("search.filters.contentType") || "Content Type"}
@@ -196,7 +202,7 @@ export function SearchFilterPopup({
           </div>
         </div>
 
-        {/* Genre Filter */}
+        {/* Genres */}
         <div>
           <h4 className="text-sm font-semibold text-type-emphasis mb-3">
             {t("search.filters.genres") || "Genres"}
@@ -219,7 +225,7 @@ export function SearchFilterPopup({
           </div>
         </div>
 
-        {/* Year Range Filter */}
+        {/* Year Range */}
         <div>
           <h4 className="text-sm font-semibold text-type-emphasis mb-3">
             {t("search.filters.yearRange") || "Release Year"}
@@ -234,25 +240,38 @@ export function SearchFilterPopup({
                 min="1900"
                 max={filters.years[1]}
                 value={filters.years[0]}
-                onChange={(e) => handleYearChange("min", parseInt(e.target.value))}
+                onChange={(e) =>
+                  handleYearChange(
+                    "min",
+                    parseInt(e.target.value, 10),
+                  )
+                }
                 className="w-full bg-dropdown-hoverBackground border border-type-divider rounded px-3 py-2 text-white text-sm"
               />
             </div>
+
             <div className="flex-1">
-              <label className="text-xs text-type-secondary mb-1 block">To</label>
+              <label className="text-xs text-type-secondary mb-1 block">
+                To
+              </label>
               <input
                 type="number"
                 min={filters.years[0]}
                 max={new Date().getFullYear()}
                 value={filters.years[1]}
-                onChange={(e) => handleYearChange("max", parseInt(e.target.value))}
+                onChange={(e) =>
+                  handleYearChange(
+                    "max",
+                    parseInt(e.target.value, 10),
+                  )
+                }
                 className="w-full bg-dropdown-hoverBackground border border-type-divider rounded px-3 py-2 text-white text-sm"
               />
             </div>
           </div>
         </div>
 
-        {/* Rating Filter */}
+        {/* Rating */}
         <div>
           <h4 className="text-sm font-semibold text-type-emphasis mb-3">
             {t("search.filters.rating") || "Rating"}
@@ -274,6 +293,7 @@ export function SearchFilterPopup({
                 className="w-full bg-dropdown-hoverBackground border border-type-divider rounded px-3 py-2 text-white text-sm"
               />
             </div>
+
             <div className="flex-1">
               <label className="text-xs text-type-secondary mb-1 block">
                 Max
@@ -293,7 +313,7 @@ export function SearchFilterPopup({
           </div>
         </div>
 
-        {/* Status Filter */}
+        {/* Status */}
         <div>
           <h4 className="text-sm font-semibold text-type-emphasis mb-3">
             {t("search.filters.status") || "Status"}
@@ -316,15 +336,17 @@ export function SearchFilterPopup({
           </div>
         </div>
 
-        {/* Action Buttons */}
+        {/* Actions */}
         <div className="flex gap-3 pt-4 border-t border-type-divider">
           <button
+            type="button"
             onClick={handleReset}
             className="flex-1 px-4 py-2 text-sm font-medium text-white bg-dropdown-hoverBackground hover:bg-opacity-80 rounded transition-all"
           >
             {t("search.filters.reset") || "Reset"}
           </button>
           <button
+            type="button"
             onClick={handleApply}
             className="flex-1 px-4 py-2 text-sm font-medium text-white bg-buttons-primary hover:bg-buttons-primaryHover rounded transition-all"
           >
