@@ -1,9 +1,9 @@
 import c from "classnames";
 import {
+  HTMLAttributes,
   ReactNode,
   useEffect,
   useRef,
-  HTMLAttributes,
 } from "react";
 
 import { usePreferencesStore } from "../../stores/preferences";
@@ -52,11 +52,7 @@ function Base(props: {
 }
 
 function Child(props: { className?: string; children?: ReactNode }) {
-  return (
-    <div className={c(props.className, "relative")}>
-      {props.children}
-    </div>
-  );
+  return <div className={c(props.className, "relative")}>{props.children}</div>;
 }
 
 /* ------------------------------------------------------------------ */
@@ -102,7 +98,7 @@ function Light({
 
     document.addEventListener("mousemove", mouseMove);
     return () => document.removeEventListener("mousemove", mouseMove);
-  }, [size, enableLowPerformanceMode]);
+  }, [enableLowPerformanceMode, size]);
 
   if (enableLowPerformanceMode) {
     return null;
@@ -115,9 +111,7 @@ function Light({
       className={c(
         "flare-light pointer-events-none absolute inset-0 overflow-hidden opacity-0 transition-opacity duration-[400ms]",
         className,
-        {
-          "!opacity-100": enabled ?? false,
-        },
+        { "!opacity-100": enabled ?? false },
       )}
       style={{
         backgroundImage: `radial-gradient(circle at center, rgba(var(${cssVar}) / ${opacity}), rgba(var(${cssVar}) / 0) ${spread}%)`,
