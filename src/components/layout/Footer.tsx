@@ -59,7 +59,10 @@ export function Footer() {
 
   return (
     <footer className="mt-16 rounded-2xl bg-footer-background bg-opacity-50 backdrop-blur-lg mx-4 mb-4 md:mx-8 md:mb-8 border border-footer-border overflow-hidden">
-      <WideContainer ultraWide classNames="grid md:grid-cols-2 gap-16 md:gap-8 py-16 md:py-12 px-8 md:px-12">
+      <WideContainer
+        ultraWide
+        classNames="grid md:grid-cols-2 gap-16 md:gap-8 py-16 md:py-12 px-8 md:px-12"
+      >
         <div>
           <div className="inline-block">
             <BrandPill />
@@ -68,28 +71,36 @@ export function Footer() {
             {t("footer.tagline")}
           </p>
         </div>
+
         <div className="md:text-right">
           <h3 className="font-semibold text-type-emphasis">
             {t("footer.legal.disclaimer")}
           </h3>
-          <p className="mt-3 text-type-secondary">{t("footer.legal.disclaimerText")}</p>
+          <p className="mt-3 text-type-secondary">
+            {t("footer.legal.disclaimerText")}
+          </p>
         </div>
+
         <div className="flex flex-wrap gap-[0.5rem] -ml-3">
           {conf().GITHUB_LINK && (
             <FooterLink icon={Icons.GITHUB} href={conf().GITHUB_LINK}>
               {t("footer.links.github")}
             </FooterLink>
           )}
+
           <FooterLink icon={Icons.DISCORD} href={conf().DISCORD_LINK}>
             {t("footer.links.discord")}
           </FooterLink>
+
           <FooterLink href="" icon={Icons.TIP_JAR}>
             {t("footer.links.funding")}
           </FooterLink>
+
           <div className="inline md:hidden">
             <Legal />
           </div>
         </div>
+
         <div className="hidden items-center justify-end md:flex -mr-3">
           <Legal />
         </div>
