@@ -10,9 +10,7 @@ export function SupportInfoModal({ id }: { id: string }) {
   return (
     <FancyModal id={id} title={t("home.support.title")} size="md">
       <div className="space-y-4">
-        <p className="text-type-secondary">
-          {t("home.support.explanation")}
-        </p>
+        <p className="text-type-secondary">{t("home.support.explanation")}</p>
 
         <p className="text-type-secondary">
           {t("home.support.explanation2")}{" "}
@@ -23,10 +21,7 @@ export function SupportInfoModal({ id }: { id: string }) {
 
         <div className="space-y-3">
           <span className="flex justify-center items-center whitespace-nowrap">
-            <Button
-              theme="purple"
-              onClick={() => window.open("", "_blank")}
-            >
+            <Button theme="purple" onClick={() => window.open("", "_blank")}>
               {t("home.support.donate")}
             </Button>
           </span>
