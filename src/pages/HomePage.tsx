@@ -3,18 +3,17 @@ import { Helmet } from "react-helmet-async";
 import { useTranslation } from "react-i18next";
 import { To, useNavigate } from "react-router-dom";
 
-import { EstimatedSchedule } from "@/pages/parts/home/EstimatedSchedule";
-
 import { WideContainer } from "@/components/layout/WideContainer";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useRandomTranslation } from "@/hooks/useRandomTranslation";
 import { useSearchQuery } from "@/hooks/useSearchQuery";
-import { FeaturedCarousel } from "@/pages/discover/components/FeaturedCarousel";
 import type { FeaturedMedia } from "@/pages/discover/components/FeaturedCarousel";
+import { FeaturedCarousel } from "@/pages/discover/components/FeaturedCarousel";
 import DiscoverContent from "@/pages/discover/discoverContent";
 import { HomeLayout } from "@/pages/layouts/HomeLayout";
 import { BookmarksCarousel } from "@/pages/parts/home/BookmarksCarousel";
 import { BookmarksPart } from "@/pages/parts/home/BookmarksPart";
+import { EstimatedSchedule } from "@/pages/parts/home/EstimatedSchedule";
 import { HeroPart } from "@/pages/parts/home/HeroPart";
 import { WatchingCarousel } from "@/pages/parts/home/WatchingCarousel";
 import { WatchingPart } from "@/pages/parts/home/WatchingPart";
@@ -30,53 +29,53 @@ import { AdsPart } from "./parts/home/AdsPart";
 import { SupportBar } from "./parts/home/SupportBar";
 
 function useSearch(search: string) {
-  const [searching, setSearching] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [searching, setSearching] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const debouncedSearch = useDebounce<string>(search, 500);
+  const debouncedSearch = useDebounce(search, 500);
+
   useEffect(() => {
-    setSearching(search !== "");
-    setLoading(search !== "");
-    if (search !== "") {
+    const isSearching = search !== "";
+    setSearching(isSearching);
+    setLoading(isSearching);
+
+    if (isSearching) {
       window.scrollTo(0, 0);
     }
   }, [search]);
+
   useEffect(() => {
     setLoading(false);
   }, [debouncedSearch]);
 
-  return {
-    loading,
-    searching,
-  };
+  return { loading, searching };
 }
-
-// What the sigma?
 
 export function HomePage() {
   const { t } = useTranslation();
   const { t: randomT } = useRandomTranslation();
-  const emptyText = randomT(`home.search.empty`);
+  const emptyText = randomT("home.search.empty");
+
   const navigate = useNavigate();
-  const [showBg, setShowBg] = useState<boolean>(false);
+  const [showBg, setShowBg] = useState(false);
+  const [showBookmarks, setShowBookmarks] = useState(false);
+  const [showWatching, setShowWatching] = useState(false);
+
   const searchParams = useSearchQuery();
   const [search] = searchParams;
   const s = useSearch(search);
-  const [showBookmarks, setShowBookmarks] = useState(false);
-  const [showWatching, setShowWatching] = useState(false);
+
   const { showModal } = useOverlayStack();
-  const enableDiscover = usePreferencesStore((state) => state.enableDiscover);
-  const enableFeatured = usePreferencesStore((state) => state.enableFeatured);
-  const carouselRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
-  const enableCarouselView = usePreferencesStore(
-    (state) => state.enableCarouselView,
-  );
+
+  const enableDiscover = usePreferencesStore((s) => s.enableDiscover);
+  const enableFeatured = usePreferencesStore((s) => s.enableFeatured);
+  const enableCarouselView = usePreferencesStore((s) => s.enableCarouselView);
   const enableLowPerformanceMode = usePreferencesStore(
-    (state) => state.enableLowPerformanceMode,
+    (s) => s.enableLowPerformanceMode,
   );
-  const homeSectionOrder = usePreferencesStore(
-    (state) => state.homeSectionOrder,
-  );
+  const homeSectionOrder = usePreferencesStore((s) => s.homeSectionOrder);
+
+  const carouselRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   const handleClick = (path: To) => {
     window.scrollTo(0, 0);
@@ -107,6 +106,7 @@ export function HomePage() {
               onShowDetails={handleShowDetails}
             />
           );
+
         case "bookmarks":
           return enableCarouselView ? (
             <BookmarksCarousel
@@ -121,19 +121,17 @@ export function HomePage() {
               onShowDetails={handleShowDetails}
             />
           );
+
         default:
           return null;
       }
     });
 
-    if (enableCarouselView) {
-      return (
-        <WideContainer ultraWide classNames="!px-3 md:!px-9">
-          {sections}
-        </WideContainer>
-      );
-    }
-    return (
+    return enableCarouselView ? (
+      <WideContainer ultraWide classNames="!px-3 md:!px-9">
+        {sections}
+      </WideContainer>
+    ) : (
       <WideContainer>
         <div className="flex flex-col gap-8">{sections}</div>
       </WideContainer>
@@ -144,7 +142,7 @@ export function HomePage() {
     <HomeLayout showBg={showBg}>
       <div className="mb-2">
         <Helmet>
-          <style type="text/css">{`
+          <style>{`
             html, body {
               scrollbar-gutter: stable;
             }
@@ -152,7 +150,6 @@ export function HomePage() {
           <title>{t("global.name")}</title>
         </Helmet>
 
-        {/* Page Header */}
         {enableFeatured ? (
           <FeaturedCarousel
             forcedCategory="movies"
@@ -174,12 +171,10 @@ export function HomePage() {
           />
         )}
 
-        {conf().SHOW_SUPPORT_BAR ? <SupportBar /> : null}
-
-        {conf().SHOW_AD ? <AdsPart /> : null}
+        {conf().SHOW_SUPPORT_BAR && <SupportBar />}
+        {conf().SHOW_AD && <AdsPart />}
       </div>
 
-      {/* Search */}
       {search && (
         <WideContainer>
           {s.loading ? (
@@ -195,12 +190,9 @@ export function HomePage() {
         </WideContainer>
       )}
 
-      {/* User Content */}
       {!search && renderHomeSections()}
 
-      {/* Under user content */}
       <WideContainer ultraWide classNames="!px-3 md:!px-9">
-        {/* Empty text */}
         {!(showBookmarks || showWatching) &&
         (!enableDiscover || enableLowPerformanceMode) ? (
           <div className="flex flex-col translate-y-[-30px] items-center justify-center pt-20">
@@ -208,7 +200,6 @@ export function HomePage() {
           </div>
         ) : null}
 
-        {/* Discover Spacing */}
         {enableDiscover &&
           (enableFeatured ? (
             <div className="pb-4" />
@@ -217,31 +208,24 @@ export function HomePage() {
           ) : (
             <div className="pb-20" />
           ))}
-        {/* there... perfect. */}
 
-        {/* Discover section or discover button */}
         {enableDiscover && !search && !enableLowPerformanceMode ? (
           <DiscoverContent />
         ) : (
-          <div className="flex flex-col justify-center items-center h-40 space-y-4">
-            <div className="flex flex-col items-center justify-center">
-              {!search && !enableLowPerformanceMode && (
-                <Button
-                  className="px-py p-[0.35em] mt-3 rounded-xl text-type-dimmed box-content text-[18px] bg-largeCard-background justify-center items-center"
-                  onClick={() => handleClick("/discover")}
-                >
-                  {t("home.search.discover")}
-                </Button>
-              )}
-            </div>
+          <div className="flex h-40 flex-col items-center justify-center space-y-4">
+            {!search && !enableLowPerformanceMode && (
+              <Button
+                className="mt-3 rounded-xl bg-largeCard-background p-[0.35em] text-[18px] text-type-dimmed"
+                onClick={() => handleClick("/discover")}
+              >
+                {t("home.search.discover")}
+              </Button>
+            )}
           </div>
         )}
       </WideContainer>
 
-      {/* Estimated Schedule Section */}
-      {!search && !enableLowPerformanceMode && (
-        <EstimatedSchedule />
-      )}
+      {!search && !enableLowPerformanceMode && <EstimatedSchedule />}
     </HomeLayout>
   );
 }
