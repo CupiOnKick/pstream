@@ -12,7 +12,6 @@ export interface SearchBarProps {
   onChange: (value: string, force: boolean) => void;
   onUnFocus: (newSearch?: string) => void;
   value: string;
-  isSticky?: boolean;
   isInFeatured?: boolean;
   hideTooltip?: boolean;
   onFiltersApply?: (filters: FilterOptions) => void;
