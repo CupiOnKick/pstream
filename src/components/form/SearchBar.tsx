@@ -9,9 +9,14 @@ import { TextInputControl } from "../text-inputs/TextInputControl";
 
 export interface SearchBarProps {
   placeholder?: string;
+  value: string;
+
   onChange: (value: string, force: boolean) => void;
   onUnFocus: (newSearch?: string) => void;
-  value: string;
+
+  /** NEW — fixes Hero + Settings */
+  isSticky?: boolean;
+
   isInFeatured?: boolean;
   hideTooltip?: boolean;
   onFiltersApply?: (filters: FilterOptions) => void;
@@ -20,6 +25,7 @@ export interface SearchBarProps {
 export const SearchBarInput = forwardRef<HTMLInputElement, SearchBarProps>(
   (props, ref) => {
     const [focused, setFocused] = useState(false);
+
     const [lightTheme, setLightTheme] = useState(
       Boolean(props.isInFeatured) && window.scrollY < 600,
     );
@@ -68,9 +74,14 @@ export const SearchBarInput = forwardRef<HTMLInputElement, SearchBarProps>(
           ref={containerRef}
           className={c(
             "relative transition-[colors,box-shadow] outline-0 duration-200",
+
+            // 🔥 Sticky visual state
+            props.isSticky && "shadow-xl ring-1 ring-black/10",
+
             lightTheme
               ? "before:from-white/10 before:to-white/5 hover:before:from-white/20 hover:before:to-white/10 focus-within:before:from-white/30 focus-within:before:to-white/20"
               : "before:from-type-divider/20 before:to-type-divider/10 hover:before:from-type-divider/40 hover:before:to-type-divider/30 focus-within:before:from-type-divider/60 focus-within:before:to-type-divider/40",
+
             "before:absolute before:inset-0 before:rounded-full before:bg-gradient-to-br before:pointer-events-none",
             focused && !showTooltip && "ring-2 ring-type-link ring-opacity-50",
           )}
@@ -146,7 +157,6 @@ export const SearchBarInput = forwardRef<HTMLInputElement, SearchBarProps>(
             </div>
           </div>
 
-          {/* ✅ FIXED FLARE USAGE */}
           {!props.hideTooltip && !focused && props.value.length === 0 && (
             <Flare.Light
               enabled={showTooltip}
