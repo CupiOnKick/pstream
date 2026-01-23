@@ -2,6 +2,7 @@ import c from "classnames";
 import { forwardRef, useEffect, useRef, useState } from "react";
 
 import { Flare } from "@/components/utils/Flare";
+
 import { Icon, Icons } from "../Icon";
 import { FilterOptions, SearchFilterPopup } from "../layout/SearchFilterPopup";
 import { TextInputControl } from "../text-inputs/TextInputControl";
