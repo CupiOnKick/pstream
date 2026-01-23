@@ -61,25 +61,17 @@ export function SupportBar() {
             onClick={toggleDescription}
             type="button"
             className="absolute z-20 -top-2 -right-2 w-6 h-6 bg-mediaCard-hoverBackground rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-            aria-label={
-              isDescriptionDismissed ? "Show description" : "Hide description"
-            }
+            aria-label={isDescriptionDismissed ? "Show description" : "Hide description"}
           >
             <Icon
               className="text-s font-semibold text-type-secondary"
-              icon={
-                isDescriptionDismissed
-                  ? Icons.CHEVRON_UP
-                  : Icons.CHEVRON_DOWN
-              }
+              icon={isDescriptionDismissed ? Icons.CHEVRON_UP : Icons.CHEVRON_DOWN}
             />
           </button>
 
           <div
             className={`transition-all duration-300 ${
-              isDescriptionDismissed
-                ? "max-h-0 opacity-0 pb-0"
-                : "max-h-36 opacity-100 pb-0"
+              isDescriptionDismissed ? "max-h-0 opacity-0 pb-0" : "max-h-36 opacity-100 pb-0"
             }`}
           >
             <Heading3 className="transition-opacity duration-300">
