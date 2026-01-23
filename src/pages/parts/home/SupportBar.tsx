@@ -29,6 +29,7 @@ function setCookie(name: string, value: string, expiryDays: number): void {
 export function SupportBar() {
   const { t } = useTranslation();
   const { showModal } = useOverlayStack();
+
   const [isDescriptionDismissed, setIsDescriptionDismissed] = useState(() => {
     return getCookie("supportDescriptionDismissed") === "true";
   });
@@ -36,7 +37,7 @@ export function SupportBar() {
   const toggleDescription = useCallback(() => {
     const newState = !isDescriptionDismissed;
     setIsDescriptionDismissed(newState);
-    setCookie("supportDescriptionDismissed", newState ? "true" : "false", 14); // Expires after 14 days
+    setCookie("supportDescriptionDismissed", newState ? "true" : "false", 14);
   }, [isDescriptionDismissed]);
 
   const openSupportModal = useCallback(() => {
@@ -46,7 +47,6 @@ export function SupportBar() {
   const supportValue = conf().SUPPORT_BAR_VALUE;
   if (!supportValue) return null;
 
-  // Parse fraction like "100/300"
   const [currentStr, goalStr] = supportValue.split("/");
   const current = parseFloat(currentStr) || 0;
   const goal = parseFloat(goalStr) || 1;
@@ -68,10 +68,13 @@ export function SupportBar() {
             <Icon
               className="text-s font-semibold text-type-secondary"
               icon={
-                isDescriptionDismissed ? Icons.CHEVRON_UP : Icons.CHEVRON_DOWN
+                isDescriptionDismissed
+                  ? Icons.CHEVRON_UP
+                  : Icons.CHEVRON_DOWN
               }
             />
           </button>
+
           <div
             className={`transition-all duration-300 ${
               isDescriptionDismissed
@@ -82,10 +85,12 @@ export function SupportBar() {
             <Heading3 className="transition-opacity duration-300">
               {t("home.support.title")}
             </Heading3>
+
             <p className="text-type-secondary max-w-md pb-4 transition-opacity duration-300">
               {t("home.support.description")}
             </p>
           </div>
+
           <div className="flex flex-grow items-center text-sm text-type-dimmed w-full max-w-md pb-4">
             <span className="text-left">
               {t("home.support.label", {
@@ -93,21 +98,21 @@ export function SupportBar() {
                 goal: goal.toLocaleString(),
               })}
             </span>
+
             <span className="ml-auto text-right flex-shrink-0 whitespace-nowrap">
               {percentage.toFixed(1)}% {t("home.support.complete")}
             </span>
           </div>
+
           <div className="w-full max-w-md">
             <div className="relative w-full h-2 bg-progress-background bg-opacity-25 rounded-full">
-              {/* Progress bar */}
               <div
                 className="absolute top-0 left-0 h-full rounded-full bg-progress-filled transition-all duration-300"
-                style={{
-                  width: `${percentage}%`,
-                }}
+                style={{ width: `${percentage}%` }}
               />
             </div>
           </div>
+
           <div className="flex flex-grow items-center text-sm text-type-dimmed w-full max-w-md pt-4">
             <span className="text-left">
               <button
@@ -118,10 +123,9 @@ export function SupportBar() {
                 {t("home.support.moreInfo")}
               </button>
             </span>
+
             <span className="ml-auto text-right flex-shrink-0 whitespace-nowrap">
-              <MwLink url="">
-                {t("home.support.donate")}
-              </MwLink>
+              <MwLink url="">{t("home.support.donate")}</MwLink>
             </span>
           </div>
         </SettingsCard>
