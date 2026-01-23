@@ -1,10 +1,5 @@
 import c from "classnames";
-import {
-  HTMLAttributes,
-  ReactNode,
-  useEffect,
-  useRef,
-} from "react";
+import { HTMLAttributes, ReactNode, useEffect, useRef } from "react";
 
 import { usePreferencesStore } from "../../stores/preferences";
 import "./Flare.css";
