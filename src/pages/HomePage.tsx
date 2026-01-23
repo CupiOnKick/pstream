@@ -63,17 +63,25 @@ export function HomePage() {
 
   const searchParams = useSearchQuery();
   const [search] = searchParams;
-  const s = useSearch(search);
+  const searchState = useSearch(search);
 
   const { showModal } = useOverlayStack();
 
-  const enableDiscover = usePreferencesStore((s) => s.enableDiscover);
-  const enableFeatured = usePreferencesStore((s) => s.enableFeatured);
-  const enableCarouselView = usePreferencesStore((s) => s.enableCarouselView);
-  const enableLowPerformanceMode = usePreferencesStore(
-    (s) => s.enableLowPerformanceMode,
+  const enableDiscover = usePreferencesStore(
+    (state) => state.enableDiscover,
   );
-  const homeSectionOrder = usePreferencesStore((s) => s.homeSectionOrder);
+  const enableFeatured = usePreferencesStore(
+    (state) => state.enableFeatured,
+  );
+  const enableCarouselView = usePreferencesStore(
+    (state) => state.enableCarouselView,
+  );
+  const enableLowPerformanceMode = usePreferencesStore(
+    (state) => state.enableLowPerformanceMode,
+  );
+  const homeSectionOrder = usePreferencesStore(
+    (state) => state.homeSectionOrder,
+  );
 
   const carouselRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
@@ -154,7 +162,7 @@ export function HomePage() {
           <FeaturedCarousel
             forcedCategory="movies"
             onShowDetails={handleShowDetails}
-            searching={s.searching}
+            searching={searchState.searching}
             shorter
           >
             <HeroPart
@@ -177,10 +185,10 @@ export function HomePage() {
 
       {search && (
         <WideContainer>
-          {s.loading ? (
+          {searchState.loading ? (
             <SearchLoadingPart />
           ) : (
-            s.searching && (
+            searchState.searching && (
               <SearchListPart
                 searchQuery={search}
                 onShowDetails={handleShowDetails}
@@ -195,8 +203,8 @@ export function HomePage() {
       <WideContainer ultraWide classNames="!px-3 md:!px-9">
         {!(showBookmarks || showWatching) &&
         (!enableDiscover || enableLowPerformanceMode) ? (
-          <div className="flex flex-col translate-y-[-30px] items-center justify-center pt-20">
-            <p className="text-[18.5px] pb-3">{emptyText}</p>
+          <div className="flex translate-y-[-30px] flex-col items-center justify-center pt-20">
+            <p className="pb-3 text-[18.5px]">{emptyText}</p>
           </div>
         ) : null}
 
