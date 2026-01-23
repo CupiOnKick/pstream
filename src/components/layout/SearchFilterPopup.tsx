@@ -241,10 +241,7 @@ export function SearchFilterPopup({
                 max={filters.years[1]}
                 value={filters.years[0]}
                 onChange={(e) =>
-                  handleYearChange(
-                    "min",
-                    parseInt(e.target.value, 10),
-                  )
+                  handleYearChange("min", parseInt(e.target.value, 10))
                 }
                 className="w-full bg-dropdown-hoverBackground border border-type-divider rounded px-3 py-2 text-white text-sm"
               />
@@ -260,10 +257,7 @@ export function SearchFilterPopup({
                 max={new Date().getFullYear()}
                 value={filters.years[1]}
                 onChange={(e) =>
-                  handleYearChange(
-                    "max",
-                    parseInt(e.target.value, 10),
-                  )
+                  handleYearChange("max", parseInt(e.target.value, 10))
                 }
                 className="w-full bg-dropdown-hoverBackground border border-type-divider rounded px-3 py-2 text-white text-sm"
               />
